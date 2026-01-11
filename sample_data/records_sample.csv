@@ -1,0 +1,5 @@
+title,value,category,timestamp
+sensor_a,12.5,A,2026-01-11T09:00:00
+sensor_a,85.1,A,2026-01-11T09:00:01
+sensor_b,44.0,B,2026-01-11T09:00:02
+sensor_c,79.9,C,2026-01-11T09:00:03

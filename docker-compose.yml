@@ -1,0 +1,51 @@
+services:
+  db:
+    image: mariadb:11.7
+    healthcheck:
+      test: ["CMD-SHELL", "mariadb-admin ping -h 127.0.0.1 -u${DB_USER} -p${DB_PASSWORD} --silent"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+    environment:
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: rootpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - appnet
+
+  backend:
+    build:
+      context: ./backend
+    env_file:
+      - ./.env
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    networks:
+      - appnet
+
+  frontend:
+    build:
+      context: ./frontend
+    env_file:
+      - ./.env
+    depends_on:
+      - backend
+    ports:
+      - "8501:8501"
+    networks:
+      - appnet
+
+volumes:
+  mariadb_data:
+
+networks:
+  appnet:
